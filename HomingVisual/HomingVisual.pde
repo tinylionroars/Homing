@@ -6,6 +6,9 @@ A. Layering past over present
 B. Showing motion
 
 C. Using movement of partitions to switch projection
+    (C.1) Allow for displaying multiple sketches?
+    (C.2) More than 2 total sketches?
+    (C.3) Have partitions connected to wearables? (with code, with strings)
 
 
 Tech
@@ -27,9 +30,11 @@ Inspiration/Resources
 
 a. Cadence Daniels' repo: https://github.com/cadencedaniels/Interactive-Installations-DM-GY-9103-
 
-b. OpenCv marker detection: https://github.com/atduskgreg/opencv-processing/tree/master/examples/MarkerDetection
+b. OpenCV marker detection Processing example: https://github.com/atduskgreg/opencv-processing/tree/master/examples/MarkerDetection
 
-c. 
+c. OpenCV marker detection concepts: https://docs.opencv.org/3.1.0/d5/dae/tutorial_aruco_detection.html
+
+d. 
 
 */
 
