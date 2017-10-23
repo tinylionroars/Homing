@@ -41,6 +41,8 @@ d. Learning Processing by Daniel Shiffman motion sensor: https://github.com/shif
 e. Learning Processing by Daniel Shiffman motion pixels: https://github.com/shiffman/LearningProcessing/blob/master/chp16_video/example_16_13_MotionPixels/example_16_13_MotionPixels.pde
 
 f. How We Exist Here by me: https://github.com/tinylionroars/HowWeExistHere/blob/master/displaySaveFrame/displaySaveFrame.pde
+
+g. OpenCV for Processing Image Difference example: https://github.com/atduskgreg/opencv-processing/blob/master/examples/ImageDiff/ImageDiff.pde
 */
 
 import processing.video.*;
@@ -72,7 +74,9 @@ String[] fileNames = new String[maxFile]; //Declaring an array for images to doc
 
 
 void setup () {
-    size(1920, 1080); 
+   size(1920, 1080);
+   
+   video = new Capture(this, width, height);
 
   //Loading images into the array
   for (int i = 0; i < maxImages; i++) {
@@ -117,6 +121,6 @@ void draw () {
       delay(1000); //Makes conditional run only once per reference time
     }
   
-  //DO A THING all the motion tracking code lmao
+  //DO A THING all the motion tracking code lmao OpenCV image difference vs Daniel Shiffman motion pixels
   
 }
