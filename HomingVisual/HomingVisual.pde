@@ -53,9 +53,7 @@ Capture video;
 
 int maxImages = 10; // Total # of recorded images
 
-int maxScreen = 5; //Total # of displayed images
-
-int maxFile = 500; //Total # of documented images
+int maxFile = 1000; //Total # of documented images
 
 
 
@@ -63,26 +61,22 @@ int imageIndex = 0; // Initial image to be recorded
 
 int dispIndex = 0; //Initial image to be referenced
 
-int screenIndex = 0; //Initial image to be displayed
-
 int fileIndex = 0; //Initial image to be saved
 
 
 
 PImage[] images = new PImage[maxImages]; //Declaring an array of images
 
-PImage[] onScreen = new PImage[maxScreen]; //Declaring an array for images to view
-
 //Line below written by Hyacinth Nil
 String[] fileNames = new String[maxFile]; //Declaring an array for images to document
 
 
 void setup () {
-    size(1920, 1080); //Size matches the resolution of the kinect's color image 
+    size(1920, 1080); 
 
   //Loading images into the array
   for (int i = 0; i < maxImages; i++) {
-    images[i] = loadImage( "proto" + i + ".jpg" );
+    images[i] = loadImage( "doc(" + i + ").jpg" );
     image(images[i], random(-width/2, width/2), random(-height/2, height/2));
   }
   
@@ -97,7 +91,7 @@ void setup () {
 void draw () {
   
   //DO A THING Make This code run every few minutes instead
-  //DO A THING Display random images, preferably with deference to more recently saved images
+  //Display random images, preferably with deference to more recently saved images (DONE?)
   //Creates a conditional which runs every 3 seconds
   if ((second() % 3) == 0) {
     //Reloads images in array to put newly captured images in projection rotation
@@ -105,11 +99,9 @@ void draw () {
       images[i] = loadImage( "doc(" + i + ").jpg" );
     }
     tint(random(60, 255), random(60, 255), random(60, 255), random(150,240)); //Randomizes rgb tint & alpha
-    onScreen[screenIndex] = images[dispIndex]; //Places current display image inside
     image(images[dispIndex], random(-width/2, width/2), random(-height/2, height/2)); //Draws current display image to screen randomly
     delay(200); //Causes frame to run only 4 times during reference period
-    dispIndex = (dispIndex + 1) % images.length; //Increment display image index by one each cycle % to return to 0 once the end of the array is reached
-    screenIndex = (screenIndex + 1) % onScreen.length; //Increment screen image index by one each cycle % to return to 0 once the end of the array is reached
+    dispIndex = (fileIndex - int(random(0, fileIndex)));
   }
 
   
@@ -122,10 +114,6 @@ void draw () {
     if ((fileCount % 28) == 0){
       saveFrame(fileNames[fileIndex]); //Saves current frame to output file
       fileIndex++; //Increases fileIndex every time conditional is called
-      /*
-      println("fuck is " + fuck); //Prints if conditional is met
-      fuck++; //Increases fuck every time conditional is called
-      */
       delay(1000); //Makes conditional run only once per reference time
     }
   
