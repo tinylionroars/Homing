@@ -76,14 +76,14 @@ void setup () {
 
   //Loading images into the array
   for (int i = 0; i < maxImages; i++) {
-    images[i] = loadImage( "doc(" + i + ").jpg" );
+    images[i] = loadImage( "doc (" + i + ").jpg" );
     image(images[i], random(-width/2, width/2), random(-height/2, height/2));
   }
   
   //Loop below written by Hyacinth Nil, based on recommendation by Katherine Bennett
   //Creating an array of strings which will name documentation images
   for(int f = 0; f < fileNames.length; f++){
-    fileNames[f] = "doc(" + f + ").jpg";
+    fileNames[f] = "doc (" + f + ").jpg";
   }
   
 }
