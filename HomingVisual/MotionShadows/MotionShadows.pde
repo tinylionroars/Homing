@@ -5,38 +5,66 @@
 // Example 16-13: Simple motion detection
 
 import processing.video.*;
+import processing.serial.*;
+import cc.arduino.*;
+import org.firmata.*;
+
+
+
+//Serial myPort;  // Create object from Serial class
+//int val;      // Data received from the serial port
+
+//Arduino arduino;
 
 Capture video;
 
-int maxPast = 100; //Total # of recorded images
-
 int maxMot = 20; //Total number of frames to be saved at one time
 
-int pastIndex = 0; // Initial image to be recorded
+PImage[] motion = new PImage [maxMot]; //
+
+int maxPast = 100; //Total # of recorded images
+int pastIndex = 0; // Initial image to be displayed
+
+PImage[] past = new PImage[maxPast]; //Declaring an array of images
+
+int maxFile = 100; //Total # of documented images
+int fileIndex = 0; //Initial image to be saved
+
+//Line below written by Hyacinth Nil
+String[] fileNames = new String[maxFile]; //Declaring an array for images to document
+
 
 // How different must a pixel be to be a "motion" pixel
 float threshold = 50;
 
-PImage[] past = new PImage[maxPast]; //Declaring an array of images
-
-PImage[] motion = new PImage [maxMot]; //
-
 void setup() {
   size(640, 480);
+  //String[] cameras = Capture.list();
   video = new Capture(this, width, height, 30);
   video.start();
-  
+
+  //myPort = new Serial(this, "COM7", 9600);
+  //arduino = new Arduino(this, "COM7(Arduino/Genuino Mega or Mega 2560)", 9600);
+  //arduino.pinMode(4, Arduino.INPUT);
+
   for (int m = 0; m < maxMot; m++) {
     motion[m] = createImage(video.width, video.height, RGB);
   }
-  
+
   //Loading images into the array
   for (int i = 0; i < maxPast; i++) {
     past[i] = loadImage( "doc(" + i + ").jpg" );
     image(past[i], random(-width/2, width/2), random(-height/2, height/2));
   }
+
+  //frameRate(10);
   
-  frameRate(10);
+  //Loop below written by Hyacinth Nil, based on recommendation by Katherine Bennett
+  //Creating an array of strings which will name documentation images
+  for(int f = 0; f < fileNames.length; f++){
+    fileNames[f] = "data/doc(" + f + ").jpg";
+  }
+  
 }
 
 void captureEvent(Capture video) {
@@ -47,10 +75,17 @@ void captureEvent(Capture video) {
 }
 
 void draw() {
-
+  /* CODE FOR GSR
+   if ( myPort.available() > 0) {  // If data is available,
+   val = myPort.read();         // read it and store it in val
+   }
+   float alpha = map(val, 0, 1000, 0, 100);
+   int(alpha);
+   */
   /*DO A THING Make the frame compare loop
-      Maybe create a new PImage array of maxMot + 1 for current video frame or + 2 for now
-  */ 
+   Maybe create a new PImage array of maxMot + 1 for current video frame or + 2 for now
+   */
+
   loadPixels();
   video.loadPixels();
   for (int m = 1; m < maxMot; m++) {
@@ -85,27 +120,41 @@ void draw() {
 
       // Step 5, How different are the colors?
       // If the color at that pixel has changed, then there is motion at that pixel.
-      if (diff > threshold) { 
-        // If motion, display current frame
-        pixels[loc] = color(r3,g3,b3,20);
+      if (mousePressed == true) { //arduino.digitalRead(4) == Arduino.LOW || 
+        pixels[loc] = color(r1, g1, b1);
       } else {
-        // If not, display last frame
-        pixels[loc] = color(r1,g1,b1,1);
+        if (diff > threshold) { 
+          // If motion, display current frame
+          pixels[loc] = color(r3, g3, b3, 20);
+        } else {
+          // If not, display last frame
+          pixels[loc] = color(r1, g1, b1, 1);
+        }
       }
     }
   }
   updatePixels();
-  
+
   if ((second() % 37) == 0) {
     //Reloads images in array to put newly captured images in projection rotation
     for (int c = 0; c < maxPast; c++) {
       past[c] = loadImage( "doc(" + c + ").jpg" );
     }
     int pastCount = pastIndex++ % maxPast;
-    tint(random(60, 255), random(60, 255), random(60, 255), random(150,240)); //Randomizes rgb tint & alpha
+    tint(random(60, 255), random(60, 255), random(60, 255), random(150, 240)); //Randomizes rgb tint & alpha
     image(past[pastCount], random(-width/2, width/2), random(-height/2, height/2)); //Draws current display image to screen randomly
     //delay(200); //Causes frame to run only 4 times during reference period
     delay(1000);
+  }
+  
+  if ((second() % 29) == 0) {
+    saveFrame(fileNames[fileIndex]); //Saves current frame to output file
+    fileIndex++; //Increases fileIndex every time conditional is called
+    /*
+      println("fuck is " + fuck); //Prints if conditional is met
+     fuck++; //Increases fuck every time conditional is called
+     */
+    delay(1000); //Makes conditional run only once per reference time
   }
   //DO A THING establish  a timer for past images to return
 }
