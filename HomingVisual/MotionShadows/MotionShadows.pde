@@ -54,14 +54,14 @@ void setup() {
     }
   }
   
-  video = new Capture(this, width, height, 30);
+  video = new Capture(this, cameras[1]);
   video.start();
 
   //myPort = new Serial(this, "COM7", 9600);
   //arduino = new Arduino(this, "COM7(Arduino/Genuino Mega or Mega 2560)", 9600);
   //arduino.pinMode(4, Arduino.INPUT);
 
-  prev = createImage(video.width, video.height, RGB);
+  prev = createImage(width, height, RGB);
 
   /*
   for (int m = 0; m < maxMot; m++) {
@@ -127,12 +127,12 @@ void draw() {
   for (int x = 0; x < video.width; x ++ ) {
     for (int y = 0; y < video.height; y ++ ) {
 
-      int loc = x + y*video.width;            // Step 1, what is the 1D pixel location
-      color now = pixels[loc];
-      color current = video.pixels[loc];      // Step 2, what is the current color
-      color previous = prev.pixels[loc]; // Step 3, what is the previous color
-
-      // Step 4, compare colors (previous vs. current)
+      int loc = x + y*video.width;            // what is the 1D pixel location
+      color now = pixels[loc];                //what is the current frame color
+      color current = video.pixels[loc];      //what is the current color
+      color previous = prev.pixels[loc];      //what is the previous color
+      
+      //compare colors (previous vs. current)
       float r1 = red(current); 
       float g1 = green(current); 
       float b1 = blue(current);
@@ -144,8 +144,10 @@ void draw() {
       float b3 = blue(now);
       float diff = dist(r1, g1, b1, r2, g2, b2);
 
-      // Step 5, How different are the colors?
-      // If the color at that pixel has changed, then there is motion at that pixel.
+      //How different are the colors?
+      //If the color at that pixel has changed, then there is motion at that pixel.
+      
+      //toggle to capture current video frame or to run motion sketch
       if (mousePressed == true) { //arduino.digitalRead(4) == Arduino.LOW || 
         pixels[loc] = color(r1, g1, b1);
       } else {
@@ -177,9 +179,9 @@ void draw() {
     saveFrame(fileNames[fileIndex]); //Saves current frame to output file
     fileIndex++; //Increases fileIndex every time conditional is called
     /*
-      println("fuck is " + fuck); //Prints if conditional is met
-     fuck++; //Increases fuck every time conditional is called
-     */
+    println("fuck is " + fuck); //Prints if conditional is met
+    fuck++; //Increases fuck every time conditional is called
+    */
     delay(1000); //Makes conditional run only once per reference time
   }
   //DO A THING establish  a timer for past images to return
