@@ -18,6 +18,8 @@ import org.firmata.*;
 
 Capture video;
 
+PImage prev;
+
 int maxMot = 20; //Total number of frames to be saved at one time
 
 PImage[] motion = new PImage [maxMot]; //
@@ -39,7 +41,19 @@ float threshold = 50;
 
 void setup() {
   size(640, 480);
-  //String[] cameras = Capture.list();
+  
+  String[] cameras = Capture.list();
+  
+  if (cameras.length == 0) {
+    println("There are no cameras available for capture.");
+    exit();
+  } else {
+    println("Available cameras:");
+    for (int i = 0; i < cameras.length; i++) {
+      println(i + cameras[i]);
+    }
+  }
+  
   video = new Capture(this, width, height, 30);
   video.start();
 
@@ -47,9 +61,14 @@ void setup() {
   //arduino = new Arduino(this, "COM7(Arduino/Genuino Mega or Mega 2560)", 9600);
   //arduino.pinMode(4, Arduino.INPUT);
 
+  prev = createImage(video.width, video.height, RGB);
+
+  /*
   for (int m = 0; m < maxMot; m++) {
     motion[m] = createImage(video.width, video.height, RGB);
   }
+  */
+
 
   //Loading images into the array
   for (int i = 0; i < maxPast; i++) {
@@ -69,9 +88,11 @@ void setup() {
 
 void captureEvent(Capture video) {
   // Save previous frame for motion detection!!
-  motion[0].copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height); // Before we read the new frame, we always save the previous frame for comparison!
-  motion[0].updatePixels();  // Read image from the camera
+  //motion[0].copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height); // Before we read the new frame, we always save the previous frame for comparison!
+  //motion[0].updatePixels();  // Read image from the camera
   video.read();
+  prev.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);
+  prev.updatePixels();
 }
 
 void draw() {
@@ -88,6 +109,9 @@ void draw() {
 
   loadPixels();
   video.loadPixels();
+  prev.loadPixels();
+  
+  /*
   for (int m = 1; m < maxMot; m++) {
     if (m < maxMot - 1) {
       motion[m + 1] = motion[m];
@@ -97,6 +121,8 @@ void draw() {
   for (int m = 0; m < maxMot; m++) {
     motion[m].loadPixels();
   }
+  */
+  
   // Begin loop to walk through every pixel
   for (int x = 0; x < video.width; x ++ ) {
     for (int y = 0; y < video.height; y ++ ) {
@@ -104,7 +130,7 @@ void draw() {
       int loc = x + y*video.width;            // Step 1, what is the 1D pixel location
       color now = pixels[loc];
       color current = video.pixels[loc];      // Step 2, what is the current color
-      color previous = motion[0].pixels[loc]; // Step 3, what is the previous color
+      color previous = prev.pixels[loc]; // Step 3, what is the previous color
 
       // Step 4, compare colors (previous vs. current)
       float r1 = red(current); 
@@ -128,14 +154,14 @@ void draw() {
           pixels[loc] = color(r3, g3, b3, 20);
         } else {
           // If not, display last frame
-          pixels[loc] = color(r1, g1, b1, 1);
+          pixels[loc] = color(r1, g1, b1, 2);
         }
       }
     }
   }
   updatePixels();
 
-  if ((second() % 37) == 0) {
+  if ((second() % 15) == 0) {
     //Reloads images in array to put newly captured images in projection rotation
     for (int c = 0; c < maxPast; c++) {
       past[c] = loadImage( "doc(" + c + ").jpg" );
@@ -147,7 +173,7 @@ void draw() {
     delay(1000);
   }
   
-  if ((second() % 29) == 0) {
+  if ((second() % 21) == 0) {
     saveFrame(fileNames[fileIndex]); //Saves current frame to output file
     fileIndex++; //Increases fileIndex every time conditional is called
     /*
