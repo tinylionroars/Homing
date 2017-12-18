@@ -54,7 +54,7 @@ void setup() {
     }
   }
   
-  video = new Capture(this, cameras[0]);
+  video = new Capture(this, cameras[0]); //works at 10fps cameras[4] but not 30fps cameras [0] on my laptop
   video.start();
 
   //myPort = new Serial(this, "COM7", 9600);
