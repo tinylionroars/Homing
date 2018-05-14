@@ -1,20 +1,7 @@
-// Learning Processing
-// Daniel Shiffman
-// http://www.learningprocessing.com
+//Source code from Learning Processing Example 16-13 by Daniel Shiffman (http://www.learningprocessing.com)
 
-// Example 16-13: Simple motion detection
 
 import processing.video.*;
-import processing.serial.*;
-import cc.arduino.*;
-import org.firmata.*;
-
-
-
-//Serial myPort;  // Create object from Serial class
-//int val;      // Data received from the serial port
-
-//Arduino arduino;
 
 Capture video;
 
@@ -40,7 +27,7 @@ String[] fileNames = new String[maxFile]; //Declaring an array for images to doc
 float threshold = 50;
 
 void setup() {
-  size(640, 480);
+  size(1280, 720);
   
   String[] cameras = Capture.list();
   
@@ -57,9 +44,6 @@ void setup() {
   video = new Capture(this, cameras[1]);
   video.start();
 
-  //myPort = new Serial(this, "COM7", 9600);
-  //arduino = new Arduino(this, "COM7(Arduino/Genuino Mega or Mega 2560)", 9600);
-  //arduino.pinMode(4, Arduino.INPUT);
 
   prev = createImage(width, height, RGB);
 
@@ -76,7 +60,7 @@ void setup() {
     image(past[i], random(-width/2, width/2), random(-height/2, height/2));
   }
 
-  //frameRate(10);
+  frameRate(10);
   
   //Loop below written by Hyacinth Nil, based on recommendation by Katherine Bennett
   //Creating an array of strings which will name documentation images
@@ -96,16 +80,6 @@ void captureEvent(Capture video) {
 }
 
 void draw() {
-  /* CODE FOR GSR
-   if ( myPort.available() > 0) {  // If data is available,
-   val = myPort.read();         // read it and store it in val
-   }
-   float alpha = map(val, 0, 1000, 0, 100);
-   int(alpha);
-   */
-  /*DO A THING Make the frame compare loop
-   Maybe create a new PImage array of maxMot + 1 for current video frame or + 2 for now
-   */
 
   loadPixels();
   video.loadPixels();
@@ -127,9 +101,9 @@ void draw() {
   for (int x = 0; x < video.width; x ++ ) {
     for (int y = 0; y < video.height; y ++ ) {
 
-      int loc = x + y*video.width;            // what is the 1D pixel location
+      int loc = x + y*video.width;            //What is the 1D pixel location
       color now = pixels[loc];                //what is the current frame color
-      color current = video.pixels[loc];      //what is the current color
+      color current = video.pixels[loc];      //what is the current video color
       color previous = prev.pixels[loc];      //what is the previous color
       
       //compare colors (previous vs. current)
@@ -153,10 +127,10 @@ void draw() {
       } else {
         if (diff > threshold) { 
           // If motion, display current frame
-          pixels[loc] = color(r3, g3, b3, 20);
+          pixels[loc] = color(r3, g3, b3, 40);
         } else {
           // If not, display last frame
-          pixels[loc] = color(r1, g1, b1, 2);
+          pixels[loc] = color(r1, g1, b1, 10);
         }
       }
     }
@@ -178,11 +152,7 @@ void draw() {
   if ((second() % 21) == 0) {
     saveFrame(fileNames[fileIndex]); //Saves current frame to output file
     fileIndex++; //Increases fileIndex every time conditional is called
-    /*
-    println("fuck is " + fuck); //Prints if conditional is met
-    fuck++; //Increases fuck every time conditional is called
-    */
     delay(1000); //Makes conditional run only once per reference time
   }
-  //DO A THING establish  a timer for past images to return
+  //DO A THING establish a timer for past images to return
 }
